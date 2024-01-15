@@ -1,0 +1,33 @@
+---
+title: "Lab 1 Saunders"
+author: "Taylor Saunders"
+date: "2023-10-29"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+setwd("C:\\Users\\taylo\\Downloads\\DAT301")
+df = read.csv("Absenteeism_at_work.csv",sep=";",header=TRUE)
+```
+
+
+```{r}
+
+```
+
+
+```{r}
+
+hours_by_month <- aggregate(df$Absenteeism.time.in.hours, by = list(month = df$Month), FUN = sum)
+
+barplot(hours_by_month$x, names.arg = hours_by_month$month, xlab = "Month", ylab = "Total Absenteeism Hours")
+
+```
+This graph suggests that during the months of March (3) and July (7) have the highest amount of absenteeism hours. 
+```{r}
+
+```
