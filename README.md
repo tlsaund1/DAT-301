@@ -1,5 +1,5 @@
 # R shiny app
-Link to R Shiny app: Measurements in cm of Species sepal L/W and petal L/W (shinyapps.io)](https://tlsaund1.shinyapps.io/Lab3Saunders/)
+Link to R Shiny app: [Measurements in cm of Species sepal L/W and petal L/W (shinyapps.io)](https://tlsaund1.shinyapps.io/Lab3Saunders/)
 
 
 My app’s purpose is for the user to be able to select any 4 attributes (Petal Length, Petal Width,
