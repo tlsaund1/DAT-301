@@ -1,0 +1,267 @@
+---
+title: "Lab2 Saunders"
+author: "Taylor Saunders"
+date: "2023-11-05"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+
+```{r}
+library(ggplot2)
+library(ggplot2movies)
+data(movies)
+```
+
+
+```{r}
+library(dplyr)
+```
+
+Question 1
+
+```{r}
+min(movies$year)
+max(movies$year)
+print("The range of years of production of the movies of this dataset is 1893 to 2005" )
+```
+
+Question 2
+
+```{r}
+#part 1
+has_budget <- sum(is.na(movies$budget))
+print(has_budget) 
+#dim(movies) #checking values are reasonable
+no_budget <- sum(!is.na(movies$budget))
+print(no_budget)
+has_budget_percent <- 53573 / 58788  * 100
+print(has_budget_percent)
+
+no_budget_percent <- 5215 / 58788 * 100
+print(no_budget_percent)
+```
+
+91% of the movies had a value for their budget, while 9% of the movies did not have a listed budget
+
+```{r}
+#part 2
+top_5_expense <- arrange(movies, desc(budget)) #arrange in descending order based on length value
+head(top_5_expense, n = 5)
+```
+The top 5 most expensive movies in this data set are Spider-Man 2 and the Titanic, both with the same budget of 200000000, Troy, Terminator 3: Rise of the Machines, and Waterworld.
+
+Question 3
+
+```{r}
+top_5 <- arrange(movies, desc(length)) #arrange in descending order based on length value to see highest value
+head(top_5, n = 5)
+```
+The top 5 longest movies are The Cure for Insomnia, The Longest Most Meaningless Movie in the World, Four Stars, Resan, and Out 1. 
+
+
+Question 4
+
+```{r}
+shortest_movie <- arrange(movies, length) #sort in ascending order
+head(shortest_movie)
+table(shortest_movie$length == 1) #more than one movie has the shortest length
+```
+The head of the first 5 shortest movies is 17 seconds to Sophie, 2 A.M. in the Subway, Admiral Cigarette, Admiral Dewey Leading Land Parade, Alphonse and Gaston No. 3.
+However, there are 169 movies in this data set with the length "1".
+
+Question 5
+
+```{r}
+genre <- movies %>% #dataset being used
+  select(Action, Animation, Comedy, Drama, Documentary, Romance, Short) %>% #the genres for our plot
+  colSums() #sum of each column
+
+barplot(genre,
+        main = "Number of Movies by Genre",
+        xlab = "Genre",
+        ylab = "Count of Movies",
+        cex.names=0.7,
+        col = "red"
+)
+```
+Question 6
+```{r}
+ 
+ action = filter(movies, Action == 1)
+ actionrating = mean(action$rating)
+ 
+ animation = filter(movies, Animation == 1)
+ animationrating = mean(animation$rating)
+ 
+ comedy = filter(movies, Comedy == 1)
+ comedyrating = mean(action$rating)
+ 
+ drama = filter(movies, Drama == 1)
+ dramarating = mean(drama$rating)
+ 
+ Doc = filter(movies, Documentary == 1)
+ docrating = mean(Doc$rating)
+ 
+ shorts = filter(movies, Short == 1)
+ shortrating = mean(shorts$rating)
+ 
+ romance = filter(movies, Romance == 1)
+ romancerating = mean(romance$rating)
+ 
+ averagerate <- c(actionrating, animationrating, comedyrating, docrating, 
+               dramarating, shortrating, romancerating) 
+ 
+ counts = as.vector(averagerate)
+ xx <-
+   barplot(
+     averagerate,
+     main = "Average rate of all movies",
+     names = c('Action','Animation','Comedy','Documentary','Drama','Short','Romance'),
+     xlab = "Genre",
+     ylim = c(0, max(averagerate) + 4),
+     cex.names=0.7,
+     col = "Red"
+   )
+ text(
+   x <- xx,
+   y = averagerate + 1,
+   label = as.character(averagerate),
+   cex = 0.5,
+   col = "Black"
+ )
+```
+Question 7
+```{r}
+ action = filter(movies, Action == 1, year >= 2000 & year <= 2005)
+ actionrating = mean(action$rating)
+ 
+ animation = filter(movies, Animation == 1, year >= 2000 & year <= 2005)
+ animationrating = mean(animation$rating)
+ 
+ comedy = filter(movies, Comedy == 1, year >= 2000 & year <= 2005)
+ comedyrating = mean(action$rating)
+ 
+ drama = filter(movies, Drama == 1, year >= 2000 & year <= 2005)
+ dramarating = mean(drama$rating)
+ 
+ Doc = filter(movies, Documentary == 1, year >= 2000 & year <= 2005)
+ docrating = mean(Doc$rating)
+ 
+ shorts = filter(movies, Short == 1, year >= 2000 & year <= 2005)
+ shortrating = mean(shorts$rating)
+ 
+ romance = filter(movies, Romance == 1, year >= 2000 & year <= 2005)
+ romancerating = mean(romance$rating)
+ 
+ averagerate <- c(actionrating, animationrating, comedyrating, docrating, 
+               dramarating, shortrating, romancerating) 
+ 
+ counts = as.vector(averagerate)
+ xx <-
+   barplot(
+     averagerate,
+     main = "Average rate of all movies",
+     names = c('Action','Animation','Comedy','Documentary','Drama','Short','Romance'),
+     xlab = "Genre",
+     ylim = c(0, max(averagerate) + 4),
+     cex.names=0.6,
+     col = "Red"
+   )
+ text(
+   x <- xx,
+   y = averagerate + 1,
+   label = as.character(averagerate),
+   cex = 0.5,
+   col = "Black"
+ )
+```
+
+Question 8
+
+```{r}
+selected_genres <- movies %>%
+  select(Action, Animation, Comedy, Drama, Documentary, Romance, year) %>%
+  filter(year >= 1990)
+
+plot_top6 <- function(genre){
+  plot_genres <- selected_genres %>%
+  group_by(year) %>%
+  summarise(
+    action = sum(Action),
+    animation = sum(Animation),
+    comedy = sum(Comedy),
+    drama = sum(Drama),
+    documentary= sum(Documentary),
+    romance = sum(Romance),
+  )
+ 
+}
+print(plot_top6())
+
+```
+Comment: When using a function, the appropriate tables are made. However, I am uncertain as to how to graph them using the function. 
+
+Plotting without the use of a function: 
+```{r}
+plot_genre <- 
+  ggplot2movies::movies %>%
+  filter(year >= 1990) %>%
+  select(Action, Animation, Comedy, Drama, Documentary, Romance, year) %>%
+  group_by(year) %>%
+  summarise(
+    action = sum(Action),
+    animation = sum(Animation),
+    comedy = sum(Comedy),
+    drama = sum(Drama),
+    documentary = sum(Documentary),
+    romance = sum(Romance),
+  )
+ ggplot(plot_genre, aes(x = year)) +
+  geom_line(aes(y = action, color = "action")) + 
+  geom_line(aes(y = animation, color = "animation")) + 
+  geom_line(aes(y = comedy, colur = "comedy")) + 
+  geom_line(aes(y = drama, color = "drama")) +
+  geom_line(aes(y = documentary, color = "doc")) +
+  geom_line(aes(y = romance, color = "romance")) +
+  ylab("count")
+```
+
+
+Question 9
+1. How many movies were published in 2002?
+2. What is the top movie for the Action Genre in 2002?
+3. What is the top movie for the Action Genre in 2002?
+
+```{r}
+#1
+#3
+movies_2002 <- sum(movies$year == "2002")
+print(movies_2002)
+```
+There were 2,168 movies published in 2002
+
+```{r}
+#2
+top_action <- filter(movies, Action == 1, year == 2002)
+top_action <- arrange(top_action, desc(rating)) 
+head(top_action)
+```
+The top rated action movie in 2002 was Sundown, with a rating of 9.5.
+
+```{r}
+#3
+top_drama <- filter(movies, Drama == 1, year == 2002)
+head(top_drama)
+top_drama <- arrange(top_drama, desc(rating)) 
+head(top_drama)
+dim(top_drama)
+```
+
+The top rated drama movie in 2002 was Mutual Admiration Society, with a rating of 9.6. 
+
+
