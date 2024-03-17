@@ -1,0 +1,138 @@
+---
+title: 'HW3 : Simple Linear Regression'
+author: "Taylor Saunders"
+date: "2023-11-06"
+output:
+  beamer_presentation: default
+  ioslides_presentation: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+library(plotly)
+library(ggplot2)
+```
+
+## What is Linear Regression
+
+- Linear regression is an algorithm used to predict a relationship between two 
+variables.
+- The two variables consist of an independent and dependent variable. 
+     - Independent variable: a variable not impacted by another variable, in this case the dependent variable.
+     - Dependent variable: Relies on the independent variable. This variable is what is trying to be predicted by using this algorithm.
+ - The linear regression "line" is a linear function that best displays the relationship between the two variables.
+ - (Nelson, 2020)
+ 
+ 
+## Application
+Using the swiss dataset built into R, we can analyze the (possible) correlation between fertility rates and number of males in working in Agriculture using this equation:
+
+<p style = "font-size:16px"> $\text{Fertility} = \beta_0 + \beta_1\cdot \text{Agriculture} + \varepsilon; \hspace{1cm} \varepsilon \sim \mathcal{N} (0; \ sigma^2)$ <br> &nbsp;  $\text{Fertility} = \hat{\beta}_0 + \hat{\beta}_1 \cdot \text{Agriculture}$ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; $\hat{\beta}_0 = b_0 - \text{estimate of }\beta_0$; &nbsp;
+$\hat{\beta}_1 = b_1 - \text{estimate of} \beta_1$
+
+## Plotting a Linear Regression
+
+```{r}
+y = swiss$Fertility; x = swiss$Agriculture
+mod = lm(y~x)
+
+xax <- list(
+  title = "Percent of Males in Agriculture",
+  titlefont = list(family="Modern Computer Roman")
+)
+yax <- list(
+  title = "Fertility Measure",
+  titlefont = list(family="Modern Computer Roman")
+)
+
+plot_ly(x=x, y=y, type="scatter", mode="markers") %>%
+   add_lines(x = x, y = fitted(mod)) %>%
+   layout(xaxis = xax, yaxis = yax)
+```
+It appears there is no correlation between Fertility and Number of Males in the field of Agriculture. 
+
+## R Code for Plotly Plot
+```{r, echo = TRUE}
+y = swiss$Fertility; x = swiss$Agriculture
+mod = lm(y~x)
+
+xax <- list(
+  title = "Percent of Males in Agriculture",
+  titlefont = list(family="Modern Computer Roman")
+)
+yax <- list(
+  title = "Fertility Measure",
+  titlefont = list(family="Modern Computer Roman")
+)
+
+plot <- plot_ly(x=x, y=y, type="scatter", mode="markers") %>%
+   add_lines(x = x, y = fitted(mod)) %>%
+   layout(xaxis = xax, yaxis = yax)
+```
+
+## Another Example using ggplot
+```{r}
+ggplot(swiss, aes(Examination, Fertility)) +
+  geom_point() +
+  geom_smooth(method='lm', se=FALSE) 
+```
+
+
+
+## Correlation between % of Educated draftees and Fertility
+
+```{r}
+ggplot(swiss,aes(Education, Fertility)) +
+  geom_point() +
+  geom_smooth(method='lm', se=FALSE) 
+```
+
+
+## Confidence Levels
+ - When using a linear regression, we can determine how accurate the model is using confidence levels. 
+ - Using our last plot, the formula for the regression is:
+ <p style = "font-size:20px"> $\text{Fertility} = \beta_0 + \beta_1\cdot \text{Education} + \varepsilon; \hspace{1cm} \varepsilon \sim \mathcal{N} (0; \ sigma^2)$
+- The formula for finding the Confidence interval is:
+<p style = "font-size:20px"> $\text{X} \pm Z \cdot \frac{s}{\sqrt{n}}$
+    - X is the mean
+    - Z is the chosen confidence interval (standard 95%)
+    - s is the standard deviation
+    - n is the number of observations
+    
+## Confidence Level in R
+```{r, echo = TRUE}
+y = swiss$Fertility; x = swiss$Education; n = length(y)
+
+SSx = sum((x - mean(x))^2)
+b1 = sum((x-mean(x)) * (y-mean(y)))/SSx;   b0 = mean(y) - b1 * mean(x)
+e = y - (b0 + b1 * x)
+s_sq = sum(e^2) / (n-2);  s = sqrt(s_sq) 
+
+SEb0 = sqrt(s_sq * (1 / n + mean(x) ^ 2 / SSx)) 
+SEb1 = sqrt(s_sq / SSx)
+
+tcrit = qt(p=0.05, df=n-2, lower.tail=FALSE)
+
+Lb0 = b0 - SEb0 * tcrit;  Rb0 = b0 + SEb0 * tcrit
+Lb1 = b1 - SEb1 * tcrit;  Rb1 = b1 + SEb1 * tcrit
+```
+
+
+```{r}
+
+CI = data.frame(matrix(c(Lb0, Rb0, Lb1, Rb1), nrow=2, byrow=T),row.names=c("b0","b1")) 
+
+colnames(CI) = c("lower","upper")
+
+CI
+```
+
+
+## References:
+Nelson, D. (2020, February 16). What is Linear Regression? Unite.AI. https://www.unite.ai/what-is-linear-regression/
+
+Šamara, M. (2021, August 8). Exploring data in R and Python (Lecture notes). https://math.la.asu.edu/~samara/RandPy-lectures/index.html
+  
+  
+
+  
